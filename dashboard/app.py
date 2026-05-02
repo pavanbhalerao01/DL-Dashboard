@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import json
 import os
+import sys
 from pathlib import Path
 
 # Page Configuration
@@ -69,20 +70,43 @@ with col2:
 
 st.markdown("---")
 
+BASE_DIR = Path(__file__).resolve().parents[1]
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
+
 # Load data
 @st.cache_data
 def load_data():
-    results_path = Path("d:\\VS Code\\Python\\DL\\results")
+    results_path = BASE_DIR / "results"
+    results_path.mkdir(parents=True, exist_ok=True)
+    
+    comparison_path = results_path / "comparison.csv"
+    results_json_path = results_path / "all_results.json"
+    summary_path = results_path / "summary_stats.json"
+    
+    if not (comparison_path.exists() and results_json_path.exists() and summary_path.exists()):
+        from utils.generate_results import (
+            create_results_database,
+            create_comparison_dataframe,
+            save_results,
+            save_summary_stats,
+        )
+        
+        results = create_results_database()
+        save_results(results, results_json_path)
+        df = create_comparison_dataframe(results)
+        df.to_csv(comparison_path, index=False)
+        save_summary_stats(df, summary_path)
     
     # Load comparison dataframe
-    df = pd.read_csv(results_path / "comparison.csv")
+    df = pd.read_csv(comparison_path)
     
     # Load results JSON
-    with open(results_path / "all_results.json", 'r') as f:
+    with open(results_json_path, 'r') as f:
         results = json.load(f)
     
     # Load summary stats
-    with open(results_path / "summary_stats.json", 'r') as f:
+    with open(summary_path, 'r') as f:
         summary = json.load(f)
     
     return df, results, summary

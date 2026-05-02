@@ -8,21 +8,31 @@ import pandas as pd
 from sklearn.metrics import ConfusionMatrixDisplay
 import json
 import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parents[1]
+RESULTS_DIR = BASE_DIR / "results"
 
 sns.set_style("whitegrid")
 plt.rcParams['figure.figsize'] = (14, 6)
 
-def load_results(filepath='d:\\VS Code\\Python\\DL\\results\\all_results.json'):
+def load_results(filepath=None):
     """Load results from JSON"""
+    if filepath is None:
+        filepath = RESULTS_DIR / "all_results.json"
     with open(filepath, 'r') as f:
         return json.load(f)
 
-def load_comparison_df(filepath='d:\\VS Code\\Python\\DL\\results\\comparison.csv'):
+def load_comparison_df(filepath=None):
     """Load comparison dataframe"""
+    if filepath is None:
+        filepath = RESULTS_DIR / "comparison.csv"
     return pd.read_csv(filepath)
 
-def plot_accuracy_by_algorithm(df, save_path='d:\\VS Code\\Python\\DL\\results\\accuracy_by_algo.png'):
+def plot_accuracy_by_algorithm(df, save_path=None):
     """Plot accuracy comparison by algorithm"""
+    if save_path is None:
+        save_path = RESULTS_DIR / "accuracy_by_algo.png"
     fig, ax = plt.subplots(figsize=(12, 6))
     
     algo_accuracy = df.groupby('Algorithm')['Accuracy'].mean().sort_values(ascending=False)
@@ -47,8 +57,10 @@ def plot_accuracy_by_algorithm(df, save_path='d:\\VS Code\\Python\\DL\\results\\
     plt.close()
     return save_path
 
-def plot_optimizer_comparison(df, save_path='d:\\VS Code\\Python\\DL\\results\\optimizer_comparison.png'):
+def plot_optimizer_comparison(df, save_path=None):
     """Plot optimizer comparison"""
+    if save_path is None:
+        save_path = RESULTS_DIR / "optimizer_comparison.png"
     fig, ax = plt.subplots(figsize=(12, 6))
     
     opt_data = df.groupby('Optimizer')[['Accuracy', 'Precision', 'Recall', 'F1-Score']].mean()
@@ -72,8 +84,10 @@ def plot_optimizer_comparison(df, save_path='d:\\VS Code\\Python\\DL\\results\\o
     plt.close()
     return save_path
 
-def plot_learning_rate_impact(df, save_path='d:\\VS Code\\Python\\DL\\results\\lr_impact.png'):
+def plot_learning_rate_impact(df, save_path=None):
     """Plot learning rate impact"""
+    if save_path is None:
+        save_path = RESULTS_DIR / "lr_impact.png"
     fig, ax = plt.subplots(figsize=(12, 6))
     
     lr_data = df.groupby('Learning Rate')[['Accuracy', 'Precision', 'Recall', 'F1-Score']].mean()
@@ -97,8 +111,10 @@ def plot_learning_rate_impact(df, save_path='d:\\VS Code\\Python\\DL\\results\\l
     plt.close()
     return save_path
 
-def plot_heatmap_accuracy(df, save_path='d:\\VS Code\\Python\\DL\\results\\accuracy_heatmap.png'):
+def plot_heatmap_accuracy(df, save_path=None):
     """Plot accuracy heatmap for algorithm vs optimizer"""
+    if save_path is None:
+        save_path = RESULTS_DIR / "accuracy_heatmap.png"
     fig, ax = plt.subplots(figsize=(10, 8))
     
     pivot_df = df.pivot_table(values='Accuracy', index='Algorithm', columns='Optimizer', aggfunc='mean')
@@ -115,8 +131,10 @@ def plot_heatmap_accuracy(df, save_path='d:\\VS Code\\Python\\DL\\results\\accur
     plt.close()
     return save_path
 
-def plot_all_metrics_comparison(df, save_path='d:\\VS Code\\Python\\DL\\results\\all_metrics.png'):
+def plot_all_metrics_comparison(df, save_path=None):
     """Plot all metrics comparison"""
+    if save_path is None:
+        save_path = RESULTS_DIR / "all_metrics.png"
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     fig.suptitle('All Metrics Comparison by Algorithm', fontsize=16, fontweight='bold', y=1.00)
     
@@ -145,8 +163,11 @@ def plot_all_metrics_comparison(df, save_path='d:\\VS Code\\Python\\DL\\results\
     plt.close()
     return save_path
 
-def plot_confusion_matrix_samples(results, save_dir='d:\\VS Code\\Python\\DL\\results'):
+def plot_confusion_matrix_samples(results, save_dir=None):
     """Plot sample confusion matrices for best performing models"""
+    if save_dir is None:
+        save_dir = RESULTS_DIR
+    save_dir = Path(save_dir)
     os.makedirs(save_dir, exist_ok=True)
     
     df = load_comparison_df()
@@ -186,13 +207,15 @@ def plot_confusion_matrix_samples(results, save_dir='d:\\VS Code\\Python\\DL\\re
             
             plt.colorbar(im, ax=ax, label='Normalized Count')
             plt.tight_layout()
-            plt.savefig(f'{save_dir}\\cm_{idx+1}_{algo.replace(" ", "_")}.png', dpi=300, bbox_inches='tight')
+            plt.savefig(save_dir / f'cm_{idx+1}_{algo.replace(" ", "_")}.png', dpi=300, bbox_inches='tight')
             plt.close()
         except Exception as e:
             print(f"Error plotting confusion matrix for {algo}: {e}")
 
-def plot_model_ranking(df, save_path='d:\\VS Code\\Python\\DL\\results\\model_ranking.png'):
+def plot_model_ranking(df, save_path=None):
     """Plot top performing models"""
+    if save_path is None:
+        save_path = RESULTS_DIR / "model_ranking.png"
     fig, ax = plt.subplots(figsize=(12, 8))
     
     # Calculate composite score

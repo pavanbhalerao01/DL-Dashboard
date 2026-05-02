@@ -6,6 +6,7 @@ import pandas as pd
 from sklearn.metrics import confusion_matrix, roc_curve, auc
 import json
 import os
+from pathlib import Path
 
 # Configuration
 OPTIMIZERS = ['Adam', 'RMSprop', 'SGD']
@@ -104,9 +105,15 @@ def create_results_database():
     
     return results
 
-def save_results(results, filepath='d:\\VS Code\\Python\\DL\\results\\all_results.json'):
+BASE_DIR = Path(__file__).resolve().parents[1]
+RESULTS_DIR = BASE_DIR / "results"
+
+def save_results(results, filepath=None):
     """Save results to JSON file"""
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    if filepath is None:
+        filepath = RESULTS_DIR / "all_results.json"
+    filepath = Path(filepath)
+    os.makedirs(filepath.parent, exist_ok=True)
     with open(filepath, 'w') as f:
         json.dump(results, f, indent=2)
     print(f"Results saved to {filepath}")
@@ -132,9 +139,12 @@ def create_comparison_dataframe(results):
     df = pd.DataFrame(data)
     return df
 
-def save_summary_stats(df, filepath='d:\\VS Code\\Python\\DL\\results\\summary_stats.json'):
+def save_summary_stats(df, filepath=None):
     """Save summary statistics for dashboards"""
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    if filepath is None:
+        filepath = RESULTS_DIR / "summary_stats.json"
+    filepath = Path(filepath)
+    os.makedirs(filepath.parent, exist_ok=True)
     best_config = df.loc[df['Accuracy'].idxmax()].to_dict()
     summary_stats = {
         'Total Configurations': int(len(df)),
@@ -156,7 +166,8 @@ if __name__ == "__main__":
     save_results(results)
     
     df = create_comparison_dataframe(results)
-    df.to_csv('d:\\VS Code\\Python\\DL\\results\\comparison.csv', index=False)
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    df.to_csv(RESULTS_DIR / "comparison.csv", index=False)
     print("Comparison CSV saved!")
     save_summary_stats(df)
     print("\nResults Summary:")
