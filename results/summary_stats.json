@@ -1,0 +1,17 @@
+{
+  "Total Configurations": 72,
+  "Total Algorithms": 8,
+  "Total Optimizers": 3,
+  "Total Learning Rates": 3,
+  "Mean Accuracy": 0.8381888888888889,
+  "Best Accuracy": 0.9408,
+  "Best Configuration": {
+    "Algorithm": "ResNet50",
+    "Optimizer": "Adam",
+    "Learning Rate": 0.01,
+    "Accuracy": 0.9408,
+    "Precision": 0.9244,
+    "Recall": 0.9354,
+    "F1-Score": 0.9299
+  }
+}

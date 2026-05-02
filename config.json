@@ -1,0 +1,98 @@
+{
+  "project": {
+    "name": "Retina Dataset Deep Learning Analysis",
+    "version": "1.0.0",
+    "description": "Google Colab-style platform for comparing deep learning models on Retina dataset",
+    "author": "DL Research Team"
+  },
+  "dataset": {
+    "name": "Retina/Diabetic Retinopathy",
+    "source": "Kaggle/Custom",
+    "num_classes": 5,
+    "image_size": [128, 128],
+    "channels": 3,
+    "train_ratio": 0.7,
+    "val_ratio": 0.15,
+    "test_ratio": 0.15
+  },
+  "algorithms": {
+    "enabled": [
+      "CNN",
+      "CNN + Augmentation",
+      "ResNet50",
+      "ResNet50 (Unfroze)",
+      "VGG16",
+      "VGG16 (Unfroze)",
+      "AlexNet",
+      "AlexNet (Unfroze)"
+    ],
+    "disabled": [
+      "InceptionV3",
+      "MobileNetV2",
+      "DenseNet121",
+      "EfficientNetB0"
+    ]
+  },
+  "hyperparameters": {
+    "optimizers": ["Adam", "RMSprop", "SGD"],
+    "learning_rates": [0.01, 0.001, 0.0001],
+    "batch_size": 32,
+    "epochs": 50,
+    "dropout_rate": 0.5,
+    "regularization": "L2"
+  },
+  "augmentation": {
+    "enabled": true,
+    "rotation_range": 20,
+    "width_shift_range": 0.2,
+    "height_shift_range": 0.2,
+    "horizontal_flip": true,
+    "vertical_flip": true,
+    "zoom_range": 0.2
+  },
+  "metrics": {
+    "primary": "accuracy",
+    "secondary": ["precision", "recall", "f1"],
+    "track_confusion_matrix": true,
+    "track_roc_auc": false
+  },
+  "visualization": {
+    "style": "whitegrid",
+    "colormap": "viridis",
+    "figure_size": [14, 6],
+    "dpi": 300,
+    "save_formats": ["png", "pdf"]
+  },
+  "notebook": {
+    "colab_style": true,
+    "show_logo": true,
+    "professional_colors": true,
+    "include_statistics": true
+  },
+  "dashboard": {
+    "framework": "streamlit",
+    "port": 8501,
+    "theme": "light",
+    "layout": "wide",
+    "sidebar_state": "expanded"
+  },
+  "export": {
+    "format": "csv",
+    "include_confusion_matrix": true,
+    "include_plots": true,
+    "compression": "zip"
+  },
+  "paths": {
+    "notebooks": "notebooks/",
+    "dashboard": "dashboard/",
+    "utils": "utils/",
+    "results": "results/",
+    "data": "data/"
+  },
+  "advanced": {
+    "enable_gpu": false,
+    "mixed_precision": false,
+    "distributed_training": false,
+    "tensorboard_logging": false
+  }
+}
